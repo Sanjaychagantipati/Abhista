@@ -1,0 +1,42 @@
+export type UserRole =
+  | 'ROLE_CUSTOMER'
+  | 'ROLE_CONTRACTOR'
+  | 'ROLE_WORKER'
+  | 'ROLE_ARCHITECT'
+  | 'ROLE_ADMIN'
+  | string
+
+export interface AuthUser {
+  id: number
+  firstName?: string
+  lastName?: string
+  email: string
+  phone?: string | null
+  role: UserRole
+  profileImageUrl?: string | null
+  status?: string
+}
+
+export interface LoginRequest {
+  email: string
+  password: string
+}
+
+export interface LoginResponse {
+  accessToken: string
+  user: AuthUser
+}
+
+export interface ApiResponse<T> {
+  success: boolean
+  message: string
+  data: T
+}
+
+export interface AuthState {
+  accessToken: string | null
+  user: AuthUser | null
+  loading: boolean
+  error: string | null
+  isAuthenticated: boolean
+}

@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/abhista_db
+    username: postgres
+    password: 1408
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  application:
+    name: backend
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:abhista-development-secret-key-change-before-production-256-bit}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}

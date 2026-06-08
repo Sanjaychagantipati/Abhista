@@ -1,0 +1,19 @@
+# Node
+node_modules/
+
+# React
+dist/
+
+# Spring Boot
+target/
+
+# Environment
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+*.log
