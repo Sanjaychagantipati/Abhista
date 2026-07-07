@@ -18,4 +18,6 @@ public interface RequirementRepository extends JpaRepository<Requirement, Long> 
 	List<Requirement> findByCustomerIdAndStatus(Long customerId, RequirementStatus status);
 
 	long countByStatus(RequirementStatus status);
+
+	List<Requirement> findByStatusOrderByCreatedAtDesc(RequirementStatus status);
 }

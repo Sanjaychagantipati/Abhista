@@ -3,7 +3,17 @@ import './App.css'
 import { LoginPage } from './pages/auth/LoginPage'
 import { CustomerDashboard } from './pages/customer/CustomerDashboard'
 import { CustomerProfilePage } from './pages/customer/CustomerProfilePage'
+import { RequirementCreatePage } from './pages/customer/RequirementCreatePage'
+import { RequirementsListPage } from './pages/customer/RequirementsListPage'
+import { RequirementDetailsPage } from './pages/customer/RequirementDetailsPage'
+import { ContractorDashboard } from './pages/contractor/ContractorDashboard'
+import { ContractorProfilePage } from './pages/contractor/ContractorProfilePage'
+import { PortfolioListPage } from './pages/contractor/PortfolioListPage'
+import { PortfolioCreatePage } from './pages/contractor/PortfolioCreatePage'
+import { LeadsListPage } from './pages/contractor/LeadsListPage'
 import { ProtectedRoute } from './routes/ProtectedRoute'
+import { useAuth } from './hooks/auth/useAuth'
+import { getDashboardPathForRole } from './services/auth/authRedirect'
 
 interface RoleDashboardPlaceholderProps {
   title: string
@@ -20,15 +30,25 @@ function RoleDashboardPlaceholder({ title }: RoleDashboardPlaceholderProps) {
   )
 }
 
+function RootRedirect() {
+  const { isAuthenticated, user } = useAuth()
+
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" replace />
+  }
+
+  return <Navigate to={getDashboardPathForRole(user.role)} replace />
+}
+
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/customer/dashboard" replace />} />
+      <Route path="/" element={<RootRedirect />} />
       <Route path="/login" element={<LoginPage />} />
       <Route
         path="/customer/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ROLE_CUSTOMER']}>
             <CustomerDashboard />
           </ProtectedRoute>
         }
@@ -36,23 +56,79 @@ function App() {
       <Route
         path="/customer/profile"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ROLE_CUSTOMER']}>
             <CustomerProfilePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customer/requirements/create"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_CUSTOMER']}>
+            <RequirementCreatePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customer/requirements"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_CUSTOMER']}>
+            <RequirementsListPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customer/requirements/:id"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_CUSTOMER']}>
+            <RequirementDetailsPage />
           </ProtectedRoute>
         }
       />
       <Route
         path="/contractor/dashboard"
         element={
-          <ProtectedRoute>
-            <RoleDashboardPlaceholder title="Contractor Dashboard" />
+          <ProtectedRoute allowedRoles={['ROLE_CONTRACTOR']}>
+            <ContractorDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/contractor/profile"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_CONTRACTOR']}>
+            <ContractorProfilePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/contractor/portfolio"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_CONTRACTOR']}>
+            <PortfolioListPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/contractor/portfolio/create"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_CONTRACTOR']}>
+            <PortfolioCreatePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/contractor/leads"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_CONTRACTOR']}>
+            <LeadsListPage />
           </ProtectedRoute>
         }
       />
       <Route
         path="/worker/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ROLE_WORKER']}>
             <RoleDashboardPlaceholder title="Worker Dashboard" />
           </ProtectedRoute>
         }
@@ -60,7 +136,7 @@ function App() {
       <Route
         path="/architect/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ROLE_ARCHITECT']}>
             <RoleDashboardPlaceholder title="Architect Dashboard" />
           </ProtectedRoute>
         }
@@ -68,12 +144,12 @@ function App() {
       <Route
         path="/admin/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
             <RoleDashboardPlaceholder title="Admin Dashboard" />
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<Navigate to="/customer/dashboard" replace />} />
+      <Route path="*" element={<RootRedirect />} />
     </Routes>
   )
 }

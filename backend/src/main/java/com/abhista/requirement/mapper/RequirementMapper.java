@@ -2,6 +2,7 @@ package com.abhista.requirement.mapper;
 
 import com.abhista.requirement.dto.CreateRequirementRequest;
 import com.abhista.requirement.dto.RequirementCreateResponse;
+import com.abhista.requirement.dto.RequirementResponse;
 import com.abhista.requirement.entity.Requirement;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,4 +19,7 @@ public interface RequirementMapper {
 
 	@Mapping(target = "message", constant = "Requirement Created Successfully")
 	RequirementCreateResponse toCreateResponse(Requirement requirement);
+
+	@Mapping(target = "customerId", source = "customer.id")
+	RequirementResponse toResponse(Requirement requirement);
 }

@@ -26,6 +26,9 @@ export function CustomerPageShell({ children }: CustomerPageShellProps) {
             <NavLink to="/customer/dashboard" className={navLinkClass}>
               Dashboard
             </NavLink>
+            <NavLink to="/customer/requirements" className={navLinkClass}>
+              Requirements
+            </NavLink>
             <NavLink to="/customer/profile" className={navLinkClass}>
               Profile
             </NavLink>

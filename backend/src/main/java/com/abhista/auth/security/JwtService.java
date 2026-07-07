@@ -21,6 +21,9 @@ public class JwtService {
 	@Value("${app.jwt.expiration-ms}")
 	private long jwtExpirationMs;
 
+	// Cached after first use — avoids re-deriving the HMAC key on every request
+	private volatile SecretKey signingKey;
+
 	public String generateToken(UserDetails userDetails) {
 		Date now = new Date();
 		Date expiresAt = new Date(now.getTime() + jwtExpirationMs);
@@ -34,17 +37,20 @@ public class JwtService {
 				.compact();
 	}
 
+	/**
+	 * Validates token in a single parse — previously this parsed the JWT twice
+	 * (once for extractUsername, once for isTokenExpired), paying for two HMAC
+	 * signature verifications per request.
+	 */
 	public boolean validateToken(String token, UserDetails userDetails) {
-		String username = extractUsername(token);
-		return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+		Claims claims = extractAllClaims(token);
+		String username = claims.getSubject();
+		boolean notExpired = !claims.getExpiration().before(new Date());
+		return username != null && username.equals(userDetails.getUsername()) && notExpired;
 	}
 
 	public String extractUsername(String token) {
 		return extractAllClaims(token).getSubject();
-	}
-
-	private boolean isTokenExpired(String token) {
-		return extractAllClaims(token).getExpiration().before(new Date());
 	}
 
 	private Claims extractAllClaims(String token) {
@@ -56,7 +62,14 @@ public class JwtService {
 	}
 
 	private SecretKey getSigningKey() {
-		return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+		if (signingKey == null) {
+			synchronized (this) {
+				if (signingKey == null) {
+					signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+				}
+			}
+		}
+		return signingKey;
 	}
 
 	private List<String> extractAuthorities(UserDetails userDetails) {

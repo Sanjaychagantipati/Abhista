@@ -78,11 +78,28 @@ public class OwnershipService {
 						""", reviewId, SecurityUtils.getCurrentUserId());
 	}
 
+	/**
+	 * Checks project access using a single SQL query instead of 3 serial round-trips.
+	 * Previously: isProjectCustomer() || isAssignedContractor() || isAssignedArchitect()
+	 * = up to 3 DB calls. Now: 1 DB call with an OR condition.
+	 */
 	@Transactional(readOnly = true)
 	public boolean canAccessProject(Long projectId) {
-		return isProjectCustomer(projectId)
-				|| isAssignedContractor(projectId)
-				|| isAssignedArchitect(projectId);
+		if (SecurityUtils.isAdmin()) {
+			return true;
+		}
+		Long currentUserId = SecurityUtils.getCurrentUserId();
+		if (projectId == null || currentUserId == null) {
+			return false;
+		}
+		Boolean result = jdbcTemplate.queryForObject("""
+				select exists(
+					select 1 from project
+					where id = ?
+					  and (customer_id = ? or contractor_id = ? or architect_id = ?)
+				)
+				""", Boolean.class, projectId, currentUserId, currentUserId, currentUserId);
+		return Objects.equals(result, Boolean.TRUE);
 	}
 
 	private boolean exists(String sql, Long resourceId, Long userId) {

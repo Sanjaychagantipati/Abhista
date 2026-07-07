@@ -5,8 +5,10 @@ import com.abhista.authorization.RestAccessDeniedHandler;
 import com.abhista.common.ApiResponse;
 import com.abhista.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,13 +31,32 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final RestAccessDeniedHandler restAccessDeniedHandler;
 	private final UserService userService;
 	private final ObjectMapper objectMapper;
+
+	// Injected as a bean — avoids calling passwordEncoder() as a plain Java method
+	private final PasswordEncoder passwordEncoder;
+
+	public SecurityConfig(
+			JwtAuthenticationFilter jwtAuthenticationFilter,
+			RestAccessDeniedHandler restAccessDeniedHandler,
+			UserService userService,
+			ObjectMapper objectMapper,
+			PasswordEncoder passwordEncoder
+	) {
+		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+		this.restAccessDeniedHandler = restAccessDeniedHandler;
+		this.userService = userService;
+		this.objectMapper = objectMapper;
+		this.passwordEncoder = passwordEncoder;
+	}
+
+	@Value("${app.cors.allowed-origins:http://localhost:5173}")
+	private String allowedOriginsConfig;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -51,8 +72,11 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
 						.requestMatchers("/api/admin/**").hasRole("ADMIN")
-						.requestMatchers("/api/customer/profile/**").hasRole("CUSTOMER")
-						.requestMatchers(HttpMethod.POST, "/api/requirements").hasRole("CUSTOMER")
+						.requestMatchers("/api/customer/profile", "/api/customer/profile/**").hasRole("CUSTOMER")
+						.requestMatchers("/api/contractor/profile", "/api/contractor/profile/**").hasRole("CONTRACTOR")
+						.requestMatchers("/api/portfolio", "/api/portfolio/**").hasRole("CONTRACTOR")
+						.requestMatchers("/api/leads", "/api/leads/**").hasRole("CONTRACTOR")
+						.requestMatchers("/api/requirements", "/api/requirements/**").hasRole("CUSTOMER")
 						.requestMatchers(HttpMethod.GET, "/api/projects/**")
 						.hasAnyRole("CUSTOMER", "CONTRACTOR", "ARCHITECT", "ADMIN")
 						.requestMatchers(HttpMethod.POST, "/api/milestones/**").hasAnyRole("CONTRACTOR", "ADMIN")
@@ -74,7 +98,8 @@ public class SecurityConfig {
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userService);
-		provider.setPasswordEncoder(passwordEncoder());
+		// Use the injected singleton bean — not a direct method call that might bypass CGLIB
+		provider.setPasswordEncoder(passwordEncoder);
 		return provider;
 	}
 
@@ -86,9 +111,12 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+		// Externalized — override CORS_ALLOWED_ORIGINS env var in production
+		List<String> origins = Arrays.asList(allowedOriginsConfig.split(","));
+		configuration.setAllowedOrigins(origins);
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-		configuration.setAllowedHeaders(List.of("*"));
+		// Explicitly restrict to required headers only — avoid wildcard "*"
+		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With"));
 		configuration.setExposedHeaders(List.of("Authorization"));
 		configuration.setAllowCredentials(false);
 		configuration.setMaxAge(3600L);
@@ -97,9 +125,5 @@ public class SecurityConfig {
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 }
+

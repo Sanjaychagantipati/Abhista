@@ -1,18 +1,35 @@
+server:
+  port: ${SERVER_PORT:8080}
+
 spring:
+  application:
+    name: abhista-api
+  devtools:
+    restart:
+      enabled: false
+
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/abhista_db
-    username: postgres
-    password: 1408
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/abhista_db}
+    username: ${DB_USERNAME:postgres}
+    # WARNING: Set DB_PASSWORD env variable before deploying to production
+    password: ${DB_PASSWORD:1408}
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
-
-  application:
-    name: backend
+      # WARNING: Use 'validate' or 'none' in production — never 'update' or 'create-drop'
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    # Disable in production to avoid verbose SQL logs
+    show-sql: ${JPA_SHOW_SQL:true}
+    properties:
+      hibernate:
+        format_sql: true
 
 app:
   jwt:
+    # WARNING: JWT_SECRET must be a strong, random 256-bit+ secret in production
     secret: ${JWT_SECRET:abhista-development-secret-key-change-before-production-256-bit}
     expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  cors:
+    # Comma-separated list of allowed origins — override in production
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}

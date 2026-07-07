@@ -55,6 +55,22 @@ export function CustomerDashboard() {
               >
                 {profileComplete ? 'Edit Profile' : 'Complete Profile'}
               </Link>
+              {profileComplete ? (
+                <Link
+                  to="/customer/requirements/create"
+                  className="inline-flex items-center justify-center rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800"
+                >
+                  Create Requirement
+                </Link>
+              ) : (
+                <button
+                  disabled
+                  title="Please complete your profile to create requirements"
+                  className="inline-flex items-center justify-center rounded-md bg-stone-300 px-4 py-2 text-sm font-semibold text-stone-500 cursor-not-allowed"
+                >
+                  Create Requirement
+                </button>
+              )}
             </div>
           </section>
         </div>

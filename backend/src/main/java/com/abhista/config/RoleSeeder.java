@@ -9,10 +9,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@RequiredArgsConstructor
 public class RoleSeeder implements CommandLineRunner {
 
 	private final RoleRepository roleRepository;
+
+	public RoleSeeder(RoleRepository roleRepository) {
+		this.roleRepository = roleRepository;
+	}
 
 	@Override
 	@Transactional

@@ -11,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.Instant;
@@ -87,11 +86,6 @@ public class User implements UserDetails {
 	@UpdateTimestamp
 	@Column(name = "updated_at")
 	private Instant updatedAt;
-
-	@PreUpdate
-	void preUpdate() {
-		updatedAt = Instant.now();
-	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

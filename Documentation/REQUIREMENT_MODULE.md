@@ -42,17 +42,50 @@ Document Sections
 
 Requirement Lifecycle
 
-Customer Creates Requirement
+OPEN
 ↓
-Requirement Published
+UNDER_REVIEW
 ↓
-Contractors View Lead
+ACCEPTED
 ↓
-Contractor Reviews Lead
-↓
-Requirement Accepted
-↓
-Project Created
+PROJECT_CREATED
+
+REJECTED
+
+(separate branch)
+
+================================================
+
+Business Rules
+
+Only customers create requirements.
+
+Only owners can view requirements.
+
+Contractors can view OPEN requirements only.
+
+Admin can access all requirements.
+
+================================================
+
+Permissions
+
+Customer
+
+Contractor
+
+Admin
+
+================================================
+
+API List
+
+POST /api/requirements
+
+GET /api/requirements/my
+
+GET /api/requirements/{id}
+
 
 ====================================================
 
