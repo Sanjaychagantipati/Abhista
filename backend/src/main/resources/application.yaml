@@ -10,10 +10,10 @@ spring:
 
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/abhista_db}
+    url: ${DB_URL:jdbc:postgresql://db.ovfuswwlltkvgrxtnybl.supabase.co:5432/postgres?sslmode=require}
     username: ${DB_USERNAME:postgres}
     # WARNING: Set DB_PASSWORD env variable before deploying to production
-    password: ${DB_PASSWORD:1408}
+    password: ${DB_PASSWORD:}
 
   jpa:
     hibernate:
