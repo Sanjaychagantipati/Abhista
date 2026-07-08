@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local env variables
+.env
+.vercel
+
+# Compiled API gateway javascript outputs
+api/**/*.js
+api/**/*.js.map
