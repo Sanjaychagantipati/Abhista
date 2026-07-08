@@ -1,4 +1,4 @@
-import { db } from '../utils/db';
+import { db } from '../utils/db.js';
 import { CategoryType } from '@prisma/client';
 
 export interface CategoryInput {

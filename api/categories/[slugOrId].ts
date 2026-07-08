@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyToken, hasRole } from '../utils/auth';
-import { getCategoryBySlug, updateCategory, deleteCategory } from '../services/categoryService';
+import { verifyToken, hasRole } from '../utils/auth.js';
+import { getCategoryBySlug, updateCategory, deleteCategory } from '../services/categoryService.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { slugOrId } = req.query;

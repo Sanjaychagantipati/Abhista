@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyToken, hasRole } from '../utils/auth';
-import { getActiveCategories, createCategory } from '../services/categoryService';
+import { verifyToken, hasRole } from '../utils/auth.js';
+import { getActiveCategories, createCategory } from '../services/categoryService.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const method = req.method;
