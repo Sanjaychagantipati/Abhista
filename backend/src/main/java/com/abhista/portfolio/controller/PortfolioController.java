@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/portfolio")
-@PreAuthorize("hasRole('CONTRACTOR')")
+@PreAuthorize("hasAnyRole('PROFESSIONAL', 'CONSULTANT')")
 public class PortfolioController {
 
 	private final PortfolioService portfolioService;

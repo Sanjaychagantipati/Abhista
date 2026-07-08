@@ -1,6 +1,7 @@
 package com.abhista.portfolio.entity;
 
-import com.abhista.contractor.entity.ContractorProfile;
+import com.abhista.professional.entity.ProfessionalProfile;
+import com.abhista.consultant.entity.ConsultantProfile;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -35,9 +36,13 @@ public class Portfolio {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "contractor_id", nullable = false)
-	private ContractorProfile contractor;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "professional_id")
+	private ProfessionalProfile professional;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "consultant_id")
+	private ConsultantProfile consultant;
 
 	@Column(name = "title", nullable = false, length = 150)
 	private String title;

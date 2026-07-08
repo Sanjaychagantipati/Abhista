@@ -10,11 +10,13 @@ import org.mapstruct.Mapping;
 public interface PortfolioMapper {
 
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "contractor", ignore = true)
+	@Mapping(target = "professional", ignore = true)
+	@Mapping(target = "consultant", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
 	Portfolio toEntity(CreatePortfolioRequest request);
 
-	@Mapping(target = "contractorId", source = "contractor.id")
+	@Mapping(target = "professionalId", source = "professional.id")
+	@Mapping(target = "consultantId", source = "consultant.id")
 	PortfolioResponse toResponse(Portfolio portfolio);
 }

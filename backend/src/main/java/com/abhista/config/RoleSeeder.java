@@ -21,11 +21,10 @@ public class RoleSeeder implements CommandLineRunner {
 	@Transactional
 	public void run(String... args) {
 		Map<String, String> roles = Map.of(
-				"ROLE_CUSTOMER", "Customer account for homeowners and service seekers",
-				"ROLE_CONTRACTOR", "Contractor account for project execution and worker coordination",
-				"ROLE_WORKER", "Worker account for assigned task execution",
-				"ROLE_ARCHITECT", "Architect account for design and consultation workflows",
-				"ROLE_ADMIN", "Administrator account for platform operations"
+				"ROLE_CUSTOMER", "Customer account for service seekers and subscription purchasers",
+				"ROLE_PROFESSIONAL", "Professional account for blue-collar and white-collar service providers",
+				"ROLE_CONSULTANT", "Consultant account for experts offering guidance sessions",
+				"ROLE_ADMIN", "Administrator account for platform operations and moderation"
 		);
 
 		roles.forEach((roleName, description) -> {

@@ -4,7 +4,8 @@ import java.time.Instant;
 
 public record PortfolioResponse(
 		Long id,
-		Long contractorId,
+		Long professionalId,
+		Long consultantId,
 		String title,
 		String description,
 		String projectType,

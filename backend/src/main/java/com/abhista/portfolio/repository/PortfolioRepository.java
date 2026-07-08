@@ -9,7 +9,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
 
-	List<Portfolio> findByContractorId(Long contractorId);
+	List<Portfolio> findByProfessionalId(Long professionalId);
 
-	Optional<Portfolio> findByIdAndContractorId(Long id, Long contractorId);
+	List<Portfolio> findByConsultantId(Long consultantId);
+
+	Optional<Portfolio> findByIdAndProfessionalId(Long id, Long professionalId);
+
+	Optional<Portfolio> findByIdAndConsultantId(Long id, Long consultantId);
 }
