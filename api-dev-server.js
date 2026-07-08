@@ -1,29 +1,14 @@
 import express from 'express';
 import indexHandler from './api/categories/index.js';
 import slugOrIdHandler from './api/categories/[slugOrId].js';
+import loginHandler from './api/auth/login.js';
 
 const app = express();
 app.use(express.json());
 
 // Request adapter to map Express requests and responses to Vercel format
 const adapt = (handler) => async (req, res) => {
-  req.query = { ...req.query, ...req.params };
-  
-  const originalStatus = res.status.bind(res);
-  const statusObject = {
-    json: (data) => res.json(data),
-    send: (data) => res.send(data),
-    setHeader: (name, val) => res.setHeader(name, val),
-  };
-  res.status = (code) => {
-    originalStatus(code);
-    return statusObject;
-  };
-  res.setHeader = (name, val) => {
-    res.set(name, val);
-    return res;
-  };
-
+  Object.assign(req.query, req.params);
   try {
     await handler(req, res);
   } catch (err) {
@@ -37,6 +22,7 @@ app.post('/api/categories', adapt(indexHandler));
 app.get('/api/categories/:slugOrId', adapt(slugOrIdHandler));
 app.put('/api/categories/:slugOrId', adapt(slugOrIdHandler));
 app.delete('/api/categories/:slugOrId', adapt(slugOrIdHandler));
+app.post('/api/auth/login', adapt(loginHandler));
 
 const port = 3000;
 app.listen(port, () => {

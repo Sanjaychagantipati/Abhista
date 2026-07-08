@@ -1,4 +1,5 @@
 import { PrismaClient, CategoryType } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -179,6 +180,61 @@ const categories = [
   },
 ];
 
+const testUsers = [
+  {
+    email: 'admin@abhista.com',
+    password: 'AdminPassword123',
+    role: 'ADMIN',
+    profile: null,
+  },
+  {
+    email: 'customer@abhista.com',
+    password: 'CustomerPassword123',
+    role: 'CUSTOMER',
+    profile: {
+      type: 'customer',
+      data: {
+        fullName: 'John Customer',
+        phoneNumber: '9876543210',
+        address: 'Apt 4B, Emerald Residency',
+        city: 'Hyderabad',
+        state: 'Telangana',
+        pincode: '500081',
+      },
+    },
+  },
+  {
+    email: 'professional@abhista.com',
+    password: 'ProfessionalPassword123',
+    role: 'PROFESSIONAL',
+    profile: {
+      type: 'professional',
+      data: {
+        companyName: 'Abhista Plumbing Pros',
+        ownerName: 'Bob Builder',
+        phoneNumber: '9876543211',
+        experienceYears: 5,
+        specialization: 'Plumbing',
+        description: 'Professional plumbing installations and leak repairs.',
+      },
+    },
+  },
+  {
+    email: 'consultant@abhista.com',
+    password: 'ConsultantPassword123',
+    role: 'CONSULTANT',
+    profile: {
+      type: 'consultant',
+      data: {
+        specialization: 'Structural Engineering',
+        experienceYears: 10,
+        bio: 'Senior Structural Architect and Design Consultant.',
+        consultationFee: 1500.0,
+      },
+    },
+  },
+];
+
 async function main() {
   console.log('Seeding service categories...');
   for (const category of categories) {
@@ -197,6 +253,55 @@ async function main() {
     console.log(`Upserted category: ${upserted.name} (${upserted.categoryType})`);
   }
   console.log('Category seeding completed successfully.');
+
+  console.log('\nSeeding test users...');
+  for (const user of testUsers) {
+    const existing = await prisma.user.findUnique({
+      where: { email: user.email },
+    });
+    if (!existing) {
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+      const createdUser = await prisma.user.create({
+        data: {
+          email: user.email,
+          password: hashedPassword,
+          role: user.role,
+        },
+      });
+      console.log(`Created user: ${createdUser.email} with role ${createdUser.role}`);
+
+      if (user.profile) {
+        if (user.profile.type === 'customer') {
+          await prisma.customerProfile.create({
+            data: {
+              userId: createdUser.id,
+              ...user.profile.data,
+            },
+          });
+          console.log(`Created Customer Profile for ${createdUser.email}`);
+        } else if (user.profile.type === 'professional') {
+          await prisma.professionalProfile.create({
+            data: {
+              userId: createdUser.id,
+              ...user.profile.data,
+            },
+          });
+          console.log(`Created Professional Profile for ${createdUser.email}`);
+        } else if (user.profile.type === 'consultant') {
+          await prisma.consultantProfile.create({
+            data: {
+              userId: createdUser.id,
+              ...user.profile.data,
+            },
+          });
+          console.log(`Created Consultant Profile for ${createdUser.email}`);
+        }
+      }
+    } else {
+      console.log(`User already exists: ${user.email}`);
+    }
+  }
+  console.log('User seeding completed successfully.');
 }
 
 main()
