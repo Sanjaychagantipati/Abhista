@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT:8085}
 
 spring:
   application:
@@ -10,8 +10,8 @@ spring:
 
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://db.ovfuswwlltkvgrxtnybl.supabase.co:5432/postgres?sslmode=require}
-    username: ${DB_USERNAME:postgres}
+    url: ${DB_URL:jdbc:postgresql://aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres?sslmode=require}
+    username: ${DB_USERNAME:postgres.ovfuswwlltkvgrxtnybl}
     # WARNING: Set DB_PASSWORD env variable before deploying to production
     password: ${DB_PASSWORD:}
 
