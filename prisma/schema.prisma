@@ -1,6 +1,7 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -135,17 +136,26 @@ model ConsultantProfile {
   @@map("consultant_profiles")
 }
 
-model ServiceCategory {
-  id          Int             @id @default(autoincrement())
-  name        String          @unique
-  slug        String          @unique
-  categoryType String         @map("category_type") // BLUE_COLLAR or WHITE_COLLAR
-  description String?
-  imageUrl    String?         @map("image_url")
-  parentId    Int?            @map("parent_id")
-  createdAt   DateTime        @default(now())
+enum CategoryType {
+  BLUE_COLLAR
+  WHITE_COLLAR
+}
 
-  bookings    Booking[]
+model ServiceCategory {
+  id            Int             @id @default(autoincrement())
+  name          String          @unique
+  slug          String          @unique
+  categoryType  CategoryType    @map("category_type")
+  description   String?
+  imageUrl      String?         @map("image_url")
+  icon          String?
+  parentId      Int?            @map("parent_id")
+  isActive      Boolean         @default(true) @map("is_active")
+  displayOrder  Int             @default(0) @map("display_order")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  bookings      Booking[]
 
   @@map("service_categories")
 }
