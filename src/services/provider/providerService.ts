@@ -1,5 +1,5 @@
 import { axiosClient } from '../auth/axiosClient';
-import {
+import type {
   ProviderProfile,
   CreateProviderRequest,
   UpdateProviderRequest,

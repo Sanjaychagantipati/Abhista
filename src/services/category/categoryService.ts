@@ -1,10 +1,9 @@
 import { axiosClient } from '../auth/axiosClient';
-import {
+import type {
   ServiceCategory,
   CreateCategoryRequest,
   UpdateCategoryRequest,
 } from '../../types/category/categoryTypes';
-import { ApiResponse } from '../../types/auth/authTypes'; // Wait, let's check if ApiResponse is defined in authTypes or if we should define a generic interface.
 
 // Let's create a generic response structure or map the return data directly.
 // The Vercel handlers return:
