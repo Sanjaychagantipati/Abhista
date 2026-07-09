@@ -5,8 +5,6 @@ import type {
   UpdateProviderRequest,
   ProvidersQueryFilters,
   PagedResponse,
-  AvailabilityStatus,
-  ProviderDashboardSummary,
 } from '../../types/provider/providerTypes';
 
 export const providerApi = {
@@ -45,21 +43,6 @@ export const providerApi = {
     const response = await axiosClient.put<{ success: boolean; message: string; data: ProviderProfile }>(
       '/api/providers/profile',
       request
-    );
-    return response.data.data;
-  },
-
-  async getDashboardSummary(): Promise<ProviderDashboardSummary> {
-    const response = await axiosClient.get<{ success: boolean; data: ProviderDashboardSummary }>(
-      '/api/provider/dashboard/summary'
-    );
-    return response.data.data;
-  },
-
-  async updateAvailability(status: AvailabilityStatus): Promise<ProviderProfile> {
-    const response = await axiosClient.patch<{ success: boolean; data: ProviderProfile }>(
-      '/api/provider/profile/availability',
-      { status }
     );
     return response.data.data;
   },

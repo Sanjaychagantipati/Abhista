@@ -18,7 +18,6 @@ export interface ProviderProfile {
   totalReviews: number;
   totalBookings: number;
   isAvailable: boolean;
-  availabilityStatus?: AvailabilityStatus;
   isFeatured: boolean;
   canProvideServices: boolean;
   canProvideConsultation: boolean;
@@ -88,38 +87,4 @@ export interface PagedResponse<T> {
   limit: number;
   totalPages: number;
   data: T[];
-}
-
-export type AvailabilityStatus = 'AVAILABLE' | 'BUSY' | 'ON_LEAVE';
-
-export interface ProviderDashboardSummary {
-  profile: {
-    fullName: string;
-    businessName: string | null;
-    isVerified: boolean;
-    experienceYears: number;
-    availabilityStatus: AvailabilityStatus;
-    categoryName: string;
-  };
-  profileCompletion: number;
-  verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
-  availabilityStatus: AvailabilityStatus;
-  subscription: {
-    planName: string;
-    endDate: string;
-    isActive: boolean;
-  } | null;
-  stats: {
-    pending: number;
-    accepted: number;
-    completed: number;
-    cancelled: number;
-    averageRating: number;
-    totalReviews: number;
-    portfolioCount: number;
-  };
-  recentBookings: any[];
-  recentRequirements: any[];
-  recentReviews: any[];
-  notifications: any[];
 }
