@@ -30,7 +30,19 @@ import subscriptionsActivateHandler from './api/subscriptions/activate.js';
 import subscriptionsCancelHandler from './api/subscriptions/cancel.js';
 import adminPlansIndexHandler from './api/admin/subscriptions/plans/index.js';
 import adminPlansDetailHandler from './api/admin/subscriptions/plans/[id].js';
-import consultationsBookingHandler from './api/consultations/booking.js';
+
+// Consultation Handler Imports
+import consultationsIndexHandler from './api/consultations/index.js';
+import consultationsDetailHandler from './api/consultations/[id]/index.js';
+import consultationsCancelHandler from './api/consultations/[id]/cancel.js';
+import providerConsultationsIndexHandler from './api/provider/consultations/index.js';
+import providerConsultationsAcceptHandler from './api/provider/consultations/[id]/accept.js';
+import providerConsultationsRejectHandler from './api/provider/consultations/[id]/reject.js';
+import providerConsultationsRescheduleHandler from './api/provider/consultations/[id]/reschedule.js';
+import providerConsultationsCompleteHandler from './api/provider/consultations/[id]/complete.js';
+import providerAvailabilityHandler from './api/provider/availability.js';
+import adminConsultationsIndexHandler from './api/admin/consultations/index.js';
+import adminConsultationsDetailHandler from './api/admin/consultations/[id].js';
 
 const app = express();
 app.use(express.json());
@@ -95,7 +107,23 @@ app.post('/api/admin/subscriptions/plans', adapt(adminPlansIndexHandler));
 app.put('/api/admin/subscriptions/plans/:id', adapt(adminPlansDetailHandler));
 app.delete('/api/admin/subscriptions/plans/:id', adapt(adminPlansDetailHandler));
 
-app.post('/api/consultations/booking', adapt(consultationsBookingHandler));
+// Consultation Routes
+app.post('/api/consultations', adapt(consultationsIndexHandler));
+app.get('/api/consultations/my', adapt(consultationsIndexHandler));
+app.get('/api/consultations/:id', adapt(consultationsDetailHandler));
+app.patch('/api/consultations/:id/cancel', adapt(consultationsCancelHandler));
+
+app.get('/api/provider/consultations', adapt(providerConsultationsIndexHandler));
+app.patch('/api/provider/consultations/:id/accept', adapt(providerConsultationsAcceptHandler));
+app.patch('/api/provider/consultations/:id/reject', adapt(providerConsultationsRejectHandler));
+app.patch('/api/provider/consultations/:id/reschedule', adapt(providerConsultationsRescheduleHandler));
+app.patch('/api/provider/consultations/:id/complete', adapt(providerConsultationsCompleteHandler));
+
+app.get('/api/provider/availability', adapt(providerAvailabilityHandler));
+app.put('/api/provider/availability', adapt(providerAvailabilityHandler));
+
+app.get('/api/admin/consultations', adapt(adminConsultationsIndexHandler));
+app.patch('/api/admin/consultations/:id', adapt(adminConsultationsDetailHandler));
 
 const port = 3000;
 app.listen(port, () => {

@@ -130,6 +130,7 @@ model ProviderProfile {
 
   bookings               Booking[]
   consultations          ConsultationBooking[]
+  consultationAvailabilities ConsultationAvailability[]
   portfolios             Portfolio[]
   favorites              Favorite[]
   reviews                Review[]
@@ -185,18 +186,46 @@ model Booking {
   @@map("bookings")
 }
 
+enum ConsultationStatus {
+  REQUESTED
+  ACCEPTED
+  RESCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+model ConsultationAvailability {
+  id          String          @id @default(uuid())
+  providerId  String          @map("provider_id")
+  provider    ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  dayOfWeek   Int             @map("day_of_week") // 0 = Sunday, 6 = Saturday
+  startTime   String          @map("start_time")  // e.g. "09:00"
+  endTime     String          @map("end_time")    // e.g. "17:00"
+  isAvailable Boolean         @default(true)      @map("is_available")
+  createdAt   DateTime        @default(now())     @map("created_at")
+  updatedAt   DateTime        @updatedAt          @map("updated_at")
+
+  @@map("consultation_availabilities")
+}
+
 model ConsultationBooking {
-  id            String          @id @default(uuid())
-  customerId    String          @map("customer_id")
-  customer      CustomerProfile @relation(fields: [customerId], references: [id])
-  providerId    String          @map("provider_id")
-  provider      ProviderProfile @relation(fields: [providerId], references: [id])
-  status        BookingStatus   @default(REQUESTED)
-  scheduledSlot DateTime        @map("scheduled_slot")
-  meetingLink   String?         @map("meeting_link")
-  notes         String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id                String             @id @default(uuid())
+  bookingNumber     String             @unique @map("booking_number")
+  customerId        String             @map("customer_id")
+  customer          CustomerProfile    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  providerId        String             @map("provider_id")
+  provider          ProviderProfile    @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  consultationTopic String             @map("consultation_topic")
+  consultationType  String             @map("consultation_type")
+  scheduledDate     DateTime           @map("scheduled_date")
+  scheduledTime     String             @map("scheduled_time")
+  durationMinutes   Int                @map("duration_minutes")
+  customerNotes     String?            @map("customer_notes")
+  providerNotes     String?            @map("provider_notes")
+  meetingLink       String?            @map("meeting_link")
+  status            ConsultationStatus @default(REQUESTED)
+  createdAt         DateTime           @default(now())           @map("created_at")
+  updatedAt         DateTime           @updatedAt                @map("updated_at")
 
   @@map("consultation_bookings")
 }
