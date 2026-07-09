@@ -31,6 +31,8 @@ import subscriptionsCancelHandler from './api/subscriptions/cancel.js';
 import adminPlansIndexHandler from './api/admin/subscriptions/plans/index.js';
 import adminPlansDetailHandler from './api/admin/subscriptions/plans/[id].js';
 import consultationsBookingHandler from './api/consultations/booking.js';
+import providerDashboardSummaryHandler from './api/provider/dashboard/summary.js';
+import providerAvailabilityHandler from './api/provider/profile/availability.js';
 
 const app = express();
 app.use(express.json());
@@ -81,6 +83,10 @@ app.patch('/api/provider/bookings/:id/accept', adapt(providerBookingsAcceptHandl
 app.patch('/api/provider/bookings/:id/reject', adapt(providerBookingsRejectHandler));
 app.patch('/api/provider/bookings/:id/start', adapt(providerBookingsStartHandler));
 app.patch('/api/provider/bookings/:id/complete', adapt(providerBookingsCompleteHandler));
+
+// Provider Dashboard Routes
+app.get('/api/provider/dashboard/summary', adapt(providerDashboardSummaryHandler));
+app.patch('/api/provider/profile/availability', adapt(providerAvailabilityHandler));
 
 app.get('/api/admin/bookings', adapt(adminBookingsIndexHandler));
 app.patch('/api/admin/bookings/:id', adapt(adminBookingsUpdateHandler));

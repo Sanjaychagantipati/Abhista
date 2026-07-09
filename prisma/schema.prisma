@@ -53,6 +53,12 @@ enum SubscriptionStatus {
   CANCELLED
 }
 
+enum AvailabilityStatus {
+  AVAILABLE
+  BUSY
+  ON_LEAVE
+}
+
 
 model User {
   id                  String             @id @default(uuid())
@@ -124,6 +130,8 @@ model ProviderProfile {
   canProvideConsultation Boolean              @default(false) @map("can_provide_consultation")
   consultationFee        Float                @default(0.0) @map("consultation_fee")
   totalConsultations     Int                  @default(0) @map("total_consultations")
+
+  availabilityStatus     AvailabilityStatus   @default(AVAILABLE) @map("availability_status")
 
   createdAt              DateTime             @default(now()) @map("created_at")
   updatedAt              DateTime             @updatedAt @map("updated_at")
