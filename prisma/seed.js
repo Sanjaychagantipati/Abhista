@@ -209,14 +209,6 @@ const testUsers = [
     role: 'PROFESSIONAL',
     profile: {
       type: 'professional',
-      data: {
-        companyName: 'Abhista Plumbing Pros',
-        ownerName: 'Bob Builder',
-        phoneNumber: '9876543211',
-        experienceYears: 5,
-        specialization: 'Plumbing',
-        description: 'Professional plumbing installations and leak repairs.',
-      },
     },
   },
   {
@@ -280,10 +272,24 @@ async function main() {
           });
           console.log(`Created Customer Profile for ${createdUser.email}`);
         } else if (user.profile.type === 'professional') {
+          const category = await prisma.serviceCategory.findUnique({
+            where: { slug: 'plumbing' }
+          });
+          const categoryId = category ? category.id : 1;
+
           await prisma.professionalProfile.create({
             data: {
               userId: createdUser.id,
-              ...user.profile.data,
+              fullName: 'Bob Builder',
+              businessName: 'Abhista Plumbing Pros',
+              phoneNumber: '9876543211',
+              email: createdUser.email,
+              experienceYears: 5,
+              city: 'Hyderabad',
+              state: 'Telangana',
+              serviceAreas: 'Gachibowli, Madhapur, Jubilee Hills',
+              categoryId: categoryId,
+              description: 'Professional plumbing installations and leak repairs.',
             },
           });
           console.log(`Created Professional Profile for ${createdUser.email}`);

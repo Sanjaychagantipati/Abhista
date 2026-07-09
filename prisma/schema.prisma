@@ -46,10 +46,6 @@ enum PaymentStatus {
   FAILED
 }
 
-enum TargetType {
-  PROFESSIONAL
-  CONSULTANT
-}
 
 model User {
   id                  String             @id @default(uuid())
@@ -96,21 +92,32 @@ model ProfessionalProfile {
   id                 String             @id @default(uuid())
   userId             String             @unique
   user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  companyName        String             @map("company_name")
-  ownerName          String             @map("owner_name")
-  phoneNumber        String             @map("phone_number")
-  experienceYears    Int                @map("experience_years")
-  specialization     String
-  serviceAreas       String?            @map("service_areas")
+  fullName           String             @map("full_name")
+  businessName       String?            @map("business_name")
+  profileImage       String?            @map("profile_image")
+  coverImage         String?            @map("cover_image")
   description        String?
+  experienceYears    Int                @map("experience_years")
+  city               String
+  state              String
+  serviceAreas       String?            @map("service_areas")
+  categoryId         Int                @map("category_id")
+  category           ServiceCategory    @relation(fields: [categoryId], references: [id])
+  phoneNumber        String             @map("phone_number")
+  email              String
   verificationStatus VerificationStatus @default(PENDING) @map("verification_status")
+  averageRating      Float              @default(0.0) @map("average_rating")
+  totalReviews       Int                @default(0) @map("total_reviews")
+  totalBookings      Int                @default(0) @map("total_bookings")
+  isAvailable        Boolean            @default(true) @map("is_available")
   isFeatured         Boolean            @default(false) @map("is_featured")
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
 
   bookings           Booking[]
   portfolios         Portfolio[]
   favorites          Favorite[]
+  reviews            Review[]
 
   @@map("professional_profiles")
 }
@@ -132,6 +139,7 @@ model ConsultantProfile {
   consultations      ConsultationBooking[]
   portfolios         Portfolio[]
   favorites          Favorite[]
+  reviews            Review[]
 
   @@map("consultant_profiles")
 }
@@ -142,20 +150,21 @@ enum CategoryType {
 }
 
 model ServiceCategory {
-  id            Int             @id @default(autoincrement())
-  name          String          @unique
-  slug          String          @unique
-  categoryType  CategoryType    @map("category_type")
+  id            Int                   @id @default(autoincrement())
+  name          String                @unique
+  slug          String                @unique
+  categoryType  CategoryType          @map("category_type")
   description   String?
-  imageUrl      String?         @map("image_url")
+  imageUrl      String?               @map("image_url")
   icon          String?
-  parentId      Int?            @map("parent_id")
-  isActive      Boolean         @default(true) @map("is_active")
-  displayOrder  Int             @default(0) @map("display_order")
-  createdAt     DateTime        @default(now()) @map("created_at")
-  updatedAt     DateTime        @updatedAt @map("updated_at")
+  parentId      Int?                  @map("parent_id")
+  isActive      Boolean               @default(true) @map("is_active")
+  displayOrder  Int                   @default(0) @map("display_order")
+  createdAt     DateTime              @default(now()) @map("created_at")
+  updatedAt     DateTime              @updatedAt @map("updated_at")
 
   bookings      Booking[]
+  professionals ProfessionalProfile[]
 
   @@map("service_categories")
 }
@@ -236,14 +245,16 @@ model Payment {
 }
 
 model Review {
-  id         String          @id @default(uuid())
-  customerId String          @map("customer_id")
-  customer   CustomerProfile @relation(fields: [customerId], references: [id])
-  targetId   String          @map("target_id")
-  targetType TargetType      @map("target_type")
-  rating     Int
-  comment    String?
-  createdAt  DateTime        @default(now())
+  id             String               @id @default(uuid())
+  customerId     String               @map("customer_id")
+  customer       CustomerProfile      @relation(fields: [customerId], references: [id])
+  professionalId String?              @map("professional_id")
+  professional   ProfessionalProfile? @relation(fields: [professionalId], references: [id])
+  consultantId   String?              @map("consultant_id")
+  consultant     ConsultantProfile?   @relation(fields: [consultantId], references: [id])
+  rating         Int
+  comment        String?
+  createdAt      DateTime             @default(now())
 
   @@map("reviews")
 }

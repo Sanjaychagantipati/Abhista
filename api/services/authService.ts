@@ -96,7 +96,7 @@ export async function loginUser(input: LoginRequest): Promise<LoginResponse> {
     case Role.PROFESSIONAL:
       frontendRole = 'ROLE_CONTRACTOR'; // Map PROFESSIONAL to CONTRACTOR for dashboard routing
       if (user.professionalProfile) {
-        const parts = user.professionalProfile.ownerName.split(' ');
+        const parts = user.professionalProfile.fullName.split(' ');
         firstName = parts[0] || '';
         lastName = parts.slice(1).join(' ') || '';
         phone = user.professionalProfile.phoneNumber;

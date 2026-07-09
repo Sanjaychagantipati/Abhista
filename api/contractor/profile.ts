@@ -3,6 +3,23 @@ import { verifyToken } from '../utils/auth.js';
 import { db } from '../utils/db.js';
 import { VerificationStatus } from '@prisma/client';
 
+function mapToContractorProfile(profile: any) {
+  return {
+    id: profile.id,
+    userId: profile.userId,
+    companyName: profile.businessName || '',
+    ownerName: profile.fullName || '',
+    phoneNumber: profile.phoneNumber,
+    experienceYears: profile.experienceYears,
+    specialization: profile.category ? profile.category.name : 'Plumbing',
+    serviceAreas: profile.serviceAreas,
+    description: profile.description,
+    verificationStatus: profile.verificationStatus,
+    createdAt: profile.createdAt,
+    updatedAt: profile.updatedAt,
+  };
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const user = verifyToken(req);
   if (!user) {
@@ -16,11 +33,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       try {
         const profile = await db.professionalProfile.findUnique({
           where: { userId: user.id },
+          include: { category: true },
         });
         if (!profile) {
           return res.status(404).json({ success: false, message: 'Contractor profile not found' });
         }
-        return res.status(200).json({ success: true, data: profile });
+        return res.status(200).json({ success: true, data: mapToContractorProfile(profile) });
       } catch (err: any) {
         return res.status(500).json({ success: false, message: err.message });
       }
@@ -38,36 +56,50 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           description,
         } = req.body;
 
-        if (!companyName || !ownerName || !phoneNumber || experienceYears === undefined || !specialization) {
+        if (!ownerName || !phoneNumber || experienceYears === undefined || !specialization) {
           return res.status(400).json({ success: false, message: 'Missing required profile fields' });
         }
+
+        // Find category matching specialization
+        const category = await db.serviceCategory.findFirst({
+          where: {
+            name: { contains: specialization, mode: 'insensitive' },
+          },
+        });
+        const categoryId = category ? category.id : 1;
 
         const profile = await db.professionalProfile.upsert({
           where: { userId: user.id },
           update: {
-            companyName,
-            ownerName,
+            fullName: ownerName,
+            businessName: companyName,
             phoneNumber,
             experienceYears: Number(experienceYears),
-            specialization,
+            categoryId,
             serviceAreas,
             description,
+            email: user.email,
           },
           create: {
             userId: user.id,
-            companyName,
-            ownerName,
+            fullName: ownerName,
+            businessName: companyName,
             phoneNumber,
             experienceYears: Number(experienceYears),
-            specialization,
+            categoryId,
             serviceAreas,
             description,
+            email: user.email,
+            city: 'Hyderabad',
+            state: 'Telangana',
             verificationStatus: VerificationStatus.PENDING,
             isFeatured: false,
+            isAvailable: true,
           },
+          include: { category: true },
         });
 
-        return res.status(200).json({ success: true, data: profile });
+        return res.status(200).json({ success: true, data: mapToContractorProfile(profile) });
       } catch (err: any) {
         return res.status(500).json({ success: false, message: err.message });
       }
