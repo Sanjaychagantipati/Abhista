@@ -47,6 +47,12 @@ enum PaymentStatus {
   FAILED
 }
 
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
 
 model User {
   id                  String             @id @default(uuid())
@@ -202,7 +208,9 @@ model SubscriptionPlan {
   durationDays Int                @map("duration_days")
   description  String?
   features     Json?
-  createdAt    DateTime           @default(now())
+  isActive     Boolean            @default(true) @map("is_active")
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
 
   subscriptions UserSubscription[]
 
@@ -210,16 +218,16 @@ model SubscriptionPlan {
 }
 
 model UserSubscription {
-  id        String           @id @default(uuid())
-  userId    String           @map("user_id")
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  planId    Int              @map("plan_id")
-  plan      SubscriptionPlan @relation(fields: [planId], references: [id])
-  status    String           @default("ACTIVE") // ACTIVE, EXPIRED
-  startDate DateTime         @default(now()) @map("start_date")
-  endDate   DateTime         @map("end_date")
-  txRef     String?          @map("tx_ref")
-  createdAt DateTime         @default(now())
+  id                   String             @id @default(uuid())
+  userId               String             @map("user_id")
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId               Int                @map("plan_id")
+  plan                 SubscriptionPlan   @relation(fields: [planId], references: [id])
+  status               SubscriptionStatus @default(ACTIVE)
+  startDate            DateTime           @default(now()) @map("start_date")
+  endDate              DateTime           @map("end_date")
+  transactionReference String?            @map("transaction_reference")
+  createdAt            DateTime           @default(now()) @map("created_at")
 
   @@map("user_subscriptions")
 }

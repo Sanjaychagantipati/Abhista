@@ -24,6 +24,13 @@ import providerBookingsStartHandler from './api/provider/bookings/[id]/start.js'
 import providerBookingsCompleteHandler from './api/provider/bookings/[id]/complete.js';
 import adminBookingsIndexHandler from './api/admin/bookings/index.js';
 import adminBookingsUpdateHandler from './api/admin/bookings/[id].js';
+import subscriptionsPlansHandler from './api/subscriptions/plans.js';
+import subscriptionsMyHandler from './api/subscriptions/my.js';
+import subscriptionsActivateHandler from './api/subscriptions/activate.js';
+import subscriptionsCancelHandler from './api/subscriptions/cancel.js';
+import adminPlansIndexHandler from './api/admin/subscriptions/plans/index.js';
+import adminPlansDetailHandler from './api/admin/subscriptions/plans/[id].js';
+import consultationsBookingHandler from './api/consultations/booking.js';
 
 const app = express();
 app.use(express.json());
@@ -77,6 +84,18 @@ app.patch('/api/provider/bookings/:id/complete', adapt(providerBookingsCompleteH
 
 app.get('/api/admin/bookings', adapt(adminBookingsIndexHandler));
 app.patch('/api/admin/bookings/:id', adapt(adminBookingsUpdateHandler));
+
+// Subscription Routes
+app.get('/api/subscriptions/plans', adapt(subscriptionsPlansHandler));
+app.get('/api/subscriptions/my', adapt(subscriptionsMyHandler));
+app.post('/api/subscriptions/activate', adapt(subscriptionsActivateHandler));
+app.post('/api/subscriptions/cancel', adapt(subscriptionsCancelHandler));
+
+app.post('/api/admin/subscriptions/plans', adapt(adminPlansIndexHandler));
+app.put('/api/admin/subscriptions/plans/:id', adapt(adminPlansDetailHandler));
+app.delete('/api/admin/subscriptions/plans/:id', adapt(adminPlansDetailHandler));
+
+app.post('/api/consultations/booking', adapt(consultationsBookingHandler));
 
 const port = 3000;
 app.listen(port, () => {
