@@ -1,4 +1,4 @@
-export interface ProfessionalProfile {
+export interface ProviderProfile {
   id: string;
   userId: string;
   fullName: string;
@@ -19,6 +19,10 @@ export interface ProfessionalProfile {
   totalBookings: number;
   isAvailable: boolean;
   isFeatured: boolean;
+  canProvideServices: boolean;
+  canProvideConsultation: boolean;
+  consultationFee: number;
+  totalConsultations: number;
   createdAt: string;
   updatedAt: string;
   category?: {
@@ -30,7 +34,7 @@ export interface ProfessionalProfile {
   reviews?: any[];
 }
 
-export interface CreateProfessionalRequest {
+export interface CreateProviderRequest {
   fullName: string;
   businessName?: string | null;
   profileImage?: string | null;
@@ -43,9 +47,12 @@ export interface CreateProfessionalRequest {
   categoryId: number;
   phoneNumber: string;
   email: string;
+  canProvideServices?: boolean;
+  canProvideConsultation?: boolean;
+  consultationFee?: number;
 }
 
-export interface UpdateProfessionalRequest {
+export interface UpdateProviderRequest {
   fullName?: string;
   businessName?: string | null;
   profileImage?: string | null;
@@ -58,15 +65,20 @@ export interface UpdateProfessionalRequest {
   categoryId?: number;
   phoneNumber?: string;
   email?: string;
+  canProvideServices?: boolean;
+  canProvideConsultation?: boolean;
+  consultationFee?: number;
 }
 
-export interface ProfessionalsQueryFilters {
+export interface ProvidersQueryFilters {
   page?: number;
   limit?: number;
   categoryId?: number;
   city?: string;
   search?: string;
   isFeatured?: boolean;
+  canProvideServices?: boolean;
+  canProvideConsultation?: boolean;
 }
 
 export interface PagedResponse<T> {

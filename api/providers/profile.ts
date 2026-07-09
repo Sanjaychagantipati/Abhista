@@ -1,10 +1,10 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { verifyToken } from '../utils/auth.js';
 import {
-  getProfessionalByUserId,
-  createProfessionalProfile,
-  updateProfessionalProfile,
-} from '../services/professionalService.js';
+  getProviderByUserId,
+  createProviderProfile,
+  updateProviderProfile,
+} from '../services/providerService.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const user = verifyToken(req);
@@ -17,9 +17,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   switch (method) {
     case 'GET':
       try {
-        const profile = await getProfessionalByUserId(user.id);
+        const profile = await getProviderByUserId(user.id);
         if (!profile) {
-          return res.status(404).json({ success: false, message: 'Professional profile not found for this user' });
+          return res.status(404).json({ success: false, message: 'Provider profile not found for this user' });
         }
         return res.status(200).json({ success: true, data: profile });
       } catch (err: any) {
@@ -28,10 +28,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     case 'POST':
       try {
-        const newProfile = await createProfessionalProfile(user.id, req.body);
+        const newProfile = await createProviderProfile(user.id, req.body);
         return res.status(201).json({
           success: true,
-          message: 'Professional profile created successfully',
+          message: 'Provider profile created successfully',
           data: newProfile,
         });
       } catch (err: any) {
@@ -50,10 +50,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     case 'PUT':
       try {
-        const updatedProfile = await updateProfessionalProfile(user.id, req.body);
+        const updatedProfile = await updateProviderProfile(user.id, req.body);
         return res.status(200).json({
           success: true,
-          message: 'Professional profile updated successfully',
+          message: 'Provider profile updated successfully',
           data: updatedProfile,
         });
       } catch (err: any) {

@@ -206,23 +206,17 @@ const testUsers = [
   {
     email: 'professional@abhista.com',
     password: 'ProfessionalPassword123',
-    role: 'PROFESSIONAL',
+    role: 'PROVIDER',
     profile: {
-      type: 'professional',
+      type: 'provider_services',
     },
   },
   {
     email: 'consultant@abhista.com',
     password: 'ConsultantPassword123',
-    role: 'CONSULTANT',
+    role: 'PROVIDER',
     profile: {
-      type: 'consultant',
-      data: {
-        specialization: 'Structural Engineering',
-        experienceYears: 10,
-        bio: 'Senior Structural Architect and Design Consultant.',
-        consultationFee: 1500.0,
-      },
+      type: 'provider_consultant',
     },
   },
 ];
@@ -271,13 +265,13 @@ async function main() {
             },
           });
           console.log(`Created Customer Profile for ${createdUser.email}`);
-        } else if (user.profile.type === 'professional') {
+        } else if (user.profile.type === 'provider_services') {
           const category = await prisma.serviceCategory.findUnique({
             where: { slug: 'plumbing' }
           });
           const categoryId = category ? category.id : 1;
 
-          await prisma.professionalProfile.create({
+          await prisma.providerProfile.create({
             data: {
               userId: createdUser.id,
               fullName: 'Bob Builder',
@@ -290,17 +284,36 @@ async function main() {
               serviceAreas: 'Gachibowli, Madhapur, Jubilee Hills',
               categoryId: categoryId,
               description: 'Professional plumbing installations and leak repairs.',
+              canProvideServices: true,
+              canProvideConsultation: false,
             },
           });
-          console.log(`Created Professional Profile for ${createdUser.email}`);
-        } else if (user.profile.type === 'consultant') {
-          await prisma.consultantProfile.create({
+          console.log(`Created Services Provider Profile for ${createdUser.email}`);
+        } else if (user.profile.type === 'provider_consultant') {
+          const category = await prisma.serviceCategory.findUnique({
+            where: { slug: 'architect' }
+          });
+          const categoryId = category ? category.id : 1;
+
+          await prisma.providerProfile.create({
             data: {
               userId: createdUser.id,
-              ...user.profile.data,
+              fullName: 'Alice Architect',
+              businessName: 'Alice Design Studio',
+              phoneNumber: '9876543222',
+              email: createdUser.email,
+              experienceYears: 10,
+              city: 'Hyderabad',
+              state: 'Telangana',
+              serviceAreas: 'All India',
+              categoryId: categoryId,
+              description: 'Senior Structural Architect and Design Consultant.',
+              canProvideServices: true,
+              canProvideConsultation: true,
+              consultationFee: 1500.0,
             },
           });
-          console.log(`Created Consultant Profile for ${createdUser.email}`);
+          console.log(`Created Consultant/Architect Provider Profile for ${createdUser.email}`);
         }
       }
     } else {

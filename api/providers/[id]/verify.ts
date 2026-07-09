@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { verifyToken, hasRole } from '../../utils/auth.js';
-import { adminFeatureProfessional } from '../../services/professionalService.js';
+import { adminVerifyProvider } from '../../services/providerService.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const user = verifyToken(req);
@@ -16,7 +16,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const paramId = Array.isArray(id) ? id[0] : id;
 
   if (!paramId) {
-    return res.status(400).json({ success: false, message: 'Missing professional ID parameter' });
+    return res.status(400).json({ success: false, message: 'Missing provider ID parameter' });
   }
 
   const method = req.method;
@@ -26,20 +26,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { isFeatured } = req.body;
-    if (isFeatured === undefined) {
-      return res.status(400).json({ success: false, message: 'isFeatured boolean is required' });
+    const { status } = req.body;
+    if (!status) {
+      return res.status(400).json({ success: false, message: 'Verification status is required' });
     }
 
-    const updated = await adminFeatureProfessional(paramId, Boolean(isFeatured));
+    const updated = await adminVerifyProvider(paramId, status);
     return res.status(200).json({
       success: true,
-      message: `Professional featured status updated to ${isFeatured}`,
+      message: `Provider profile verification status updated to ${status}`,
       data: updated,
     });
   } catch (err: any) {
     const message = err.message || '';
-    if (message.includes('not found')) {
+    if (message.includes('not found') || message.includes('Invalid')) {
       return res.status(400).json({ success: false, message });
     }
     return res.status(500).json({ success: false, message });

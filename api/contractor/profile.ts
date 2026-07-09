@@ -31,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   switch (method) {
     case 'GET':
       try {
-        const profile = await db.professionalProfile.findUnique({
+        const profile = await db.providerProfile.findUnique({
           where: { userId: user.id },
           include: { category: true },
         });
@@ -68,7 +68,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
         const categoryId = category ? category.id : 1;
 
-        const profile = await db.professionalProfile.upsert({
+        const profile = await db.providerProfile.upsert({
           where: { userId: user.id },
           update: {
             fullName: ownerName,

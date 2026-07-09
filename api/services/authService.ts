@@ -35,8 +35,7 @@ export async function loginUser(input: LoginRequest): Promise<LoginResponse> {
     where: { email },
     include: {
       customerProfile: true,
-      professionalProfile: true,
-      consultantProfile: true,
+      providerProfile: true,
     },
   });
 
@@ -93,21 +92,13 @@ export async function loginUser(input: LoginRequest): Promise<LoginResponse> {
       }
       break;
 
-    case Role.PROFESSIONAL:
-      frontendRole = 'ROLE_CONTRACTOR'; // Map PROFESSIONAL to CONTRACTOR for dashboard routing
-      if (user.professionalProfile) {
-        const parts = user.professionalProfile.fullName.split(' ');
+    case Role.PROVIDER:
+      frontendRole = 'ROLE_PROVIDER';
+      if (user.providerProfile) {
+        const parts = user.providerProfile.fullName.split(' ');
         firstName = parts[0] || '';
         lastName = parts.slice(1).join(' ') || '';
-        phone = user.professionalProfile.phoneNumber;
-      }
-      break;
-
-    case Role.CONSULTANT:
-      frontendRole = 'ROLE_ARCHITECT'; // Map CONSULTANT to ARCHITECT for dashboard routing
-      if (user.consultantProfile) {
-        firstName = 'Consultant';
-        lastName = 'Expert';
+        phone = user.providerProfile.phoneNumber;
       }
       break;
   }

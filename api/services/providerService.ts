@@ -1,7 +1,7 @@
 import { db } from '../utils/db.js';
 import { Role, VerificationStatus } from '@prisma/client';
 
-export interface ProfessionalProfileInput {
+export interface ProviderProfileInput {
   fullName: string;
   businessName?: string | null;
   profileImage?: string | null;
@@ -14,18 +14,23 @@ export interface ProfessionalProfileInput {
   categoryId: number;
   phoneNumber: string;
   email: string;
+  canProvideServices?: boolean;
+  canProvideConsultation?: boolean;
+  consultationFee?: number;
 }
 
-export interface QueryFilters {
+export interface ProviderQueryFilters {
   page?: number;
   limit?: number;
   categoryId?: number;
   city?: string;
   search?: string;
   isFeatured?: boolean;
+  canProvideServices?: boolean;
+  canProvideConsultation?: boolean;
 }
 
-export async function listProfessionals(filters: QueryFilters) {
+export async function listProviders(filters: ProviderQueryFilters) {
   const page = Number(filters.page) || 1;
   const limit = Number(filters.limit) || 10;
   const skip = (page - 1) * limit;
@@ -49,6 +54,14 @@ export async function listProfessionals(filters: QueryFilters) {
     whereClause.isFeatured = filters.isFeatured;
   }
 
+  if (filters.canProvideServices !== undefined) {
+    whereClause.canProvideServices = filters.canProvideServices;
+  }
+
+  if (filters.canProvideConsultation !== undefined) {
+    whereClause.canProvideConsultation = filters.canProvideConsultation;
+  }
+
   if (filters.search) {
     whereClause.OR = [
       { fullName: { contains: filters.search, mode: 'insensitive' } },
@@ -58,8 +71,8 @@ export async function listProfessionals(filters: QueryFilters) {
   }
 
   const [total, data] = await Promise.all([
-    db.professionalProfile.count({ where: whereClause }),
-    db.professionalProfile.findMany({
+    db.providerProfile.count({ where: whereClause }),
+    db.providerProfile.findMany({
       where: whereClause,
       include: {
         category: true,
@@ -81,8 +94,8 @@ export async function listProfessionals(filters: QueryFilters) {
   };
 }
 
-export async function getProfessionalById(id: string) {
-  const profile = await db.professionalProfile.findUnique({
+export async function getProviderById(id: string) {
+  const profile = await db.providerProfile.findUnique({
     where: { id },
     include: {
       category: true,
@@ -96,14 +109,14 @@ export async function getProfessionalById(id: string) {
   });
 
   if (!profile) {
-    throw new Error('Professional profile not found');
+    throw new Error('Provider profile not found');
   }
 
   return profile;
 }
 
-export async function getProfessionalByUserId(userId: string) {
-  const profile = await db.professionalProfile.findUnique({
+export async function getProviderByUserId(userId: string) {
+  const profile = await db.providerProfile.findUnique({
     where: { userId },
     include: {
       category: true,
@@ -114,27 +127,27 @@ export async function getProfessionalByUserId(userId: string) {
   return profile;
 }
 
-export async function createProfessionalProfile(userId: string, input: ProfessionalProfileInput) {
-  // 1. Verify user exists and has PROFESSIONAL role
+export async function createProviderProfile(userId: string, input: ProviderProfileInput) {
+  // 1. Verify user exists and has PROVIDER role
   const user = await db.user.findUnique({ where: { id: userId } });
   if (!user) {
     throw new Error('User not found');
   }
-  if (user.role !== Role.PROFESSIONAL) {
-    throw new Error('Forbidden: Only users with PROFESSIONAL role can create professional profiles');
+  if (user.role !== Role.PROVIDER) {
+    throw new Error('Forbidden: Only users with PROVIDER role can create provider profiles');
   }
 
   // 2. Verify unique user profile (one profile per user)
-  const existingProfile = await db.professionalProfile.findUnique({ where: { userId } });
+  const existingProfile = await db.providerProfile.findUnique({ where: { userId } });
   if (existingProfile) {
-    throw new Error('Professional profile already exists for this user');
+    throw new Error('Provider profile already exists for this user');
   }
 
   // 3. Validation
-  await validateProfileInput(input);
+  await validateProviderInput(input);
 
   // 4. Create profile
-  return await db.professionalProfile.create({
+  return await db.providerProfile.create({
     data: {
       userId,
       fullName: input.fullName,
@@ -149,6 +162,9 @@ export async function createProfessionalProfile(userId: string, input: Professio
       categoryId: Number(input.categoryId),
       phoneNumber: input.phoneNumber,
       email: input.email,
+      canProvideServices: input.canProvideServices !== undefined ? Boolean(input.canProvideServices) : true,
+      canProvideConsultation: input.canProvideConsultation !== undefined ? Boolean(input.canProvideConsultation) : false,
+      consultationFee: input.consultationFee !== undefined ? Number(input.consultationFee) : 0.0,
       verificationStatus: VerificationStatus.PENDING,
       isFeatured: false,
       isAvailable: true,
@@ -156,11 +172,11 @@ export async function createProfessionalProfile(userId: string, input: Professio
   });
 }
 
-export async function updateProfessionalProfile(userId: string, input: Partial<ProfessionalProfileInput>) {
+export async function updateProviderProfile(userId: string, input: Partial<ProviderProfileInput>) {
   // 1. Verify profile exists
-  const existingProfile = await db.professionalProfile.findUnique({ where: { userId } });
+  const existingProfile = await db.providerProfile.findUnique({ where: { userId } });
   if (!existingProfile) {
-    throw new Error('Professional profile not found');
+    throw new Error('Provider profile not found');
   }
 
   // 2. Validate inputs
@@ -180,7 +196,7 @@ export async function updateProfessionalProfile(userId: string, input: Partial<P
   }
 
   // 3. Update
-  return await db.professionalProfile.update({
+  return await db.providerProfile.update({
     where: { userId },
     data: {
       fullName: input.fullName,
@@ -195,22 +211,25 @@ export async function updateProfessionalProfile(userId: string, input: Partial<P
       categoryId: input.categoryId ? Number(input.categoryId) : undefined,
       phoneNumber: input.phoneNumber,
       email: input.email,
+      canProvideServices: input.canProvideServices !== undefined ? Boolean(input.canProvideServices) : undefined,
+      canProvideConsultation: input.canProvideConsultation !== undefined ? Boolean(input.canProvideConsultation) : undefined,
+      consultationFee: input.consultationFee !== undefined ? Number(input.consultationFee) : undefined,
     },
   });
 }
 
 // Admin Operations
-export async function adminVerifyProfessional(id: string, status: string) {
+export async function adminVerifyProvider(id: string, status: string) {
   if (status !== 'VERIFIED' && status !== 'PENDING' && status !== 'REJECTED') {
     throw new Error('Invalid verification status');
   }
 
-  const profile = await db.professionalProfile.findUnique({ where: { id } });
+  const profile = await db.providerProfile.findUnique({ where: { id } });
   if (!profile) {
-    throw new Error('Professional profile not found');
+    throw new Error('Provider profile not found');
   }
 
-  return await db.professionalProfile.update({
+  return await db.providerProfile.update({
     where: { id },
     data: {
       verificationStatus: status as VerificationStatus,
@@ -218,13 +237,13 @@ export async function adminVerifyProfessional(id: string, status: string) {
   });
 }
 
-export async function adminFeatureProfessional(id: string, isFeatured: boolean) {
-  const profile = await db.professionalProfile.findUnique({ where: { id } });
+export async function adminFeatureProvider(id: string, isFeatured: boolean) {
+  const profile = await db.providerProfile.findUnique({ where: { id } });
   if (!profile) {
-    throw new Error('Professional profile not found');
+    throw new Error('Provider profile not found');
   }
 
-  return await db.professionalProfile.update({
+  return await db.providerProfile.update({
     where: { id },
     data: {
       isFeatured,
@@ -232,13 +251,13 @@ export async function adminFeatureProfessional(id: string, isFeatured: boolean) 
   });
 }
 
-export async function adminUpdateProfessionalAvailability(id: string, isAvailable: boolean) {
-  const profile = await db.professionalProfile.findUnique({ where: { id } });
+export async function adminUpdateProviderAvailability(id: string, isAvailable: boolean) {
+  const profile = await db.providerProfile.findUnique({ where: { id } });
   if (!profile) {
-    throw new Error('Professional profile not found');
+    throw new Error('Provider profile not found');
   }
 
-  return await db.professionalProfile.update({
+  return await db.providerProfile.update({
     where: { id },
     data: {
       isAvailable,
@@ -247,7 +266,7 @@ export async function adminUpdateProfessionalAvailability(id: string, isAvailabl
 }
 
 // Helpers
-async function validateProfileInput(input: ProfessionalProfileInput) {
+async function validateProviderInput(input: ProviderProfileInput) {
   if (!input.fullName || input.fullName.trim() === '') {
     throw new Error('Full name is required');
   }
@@ -270,7 +289,6 @@ async function validateProfileInput(input: ProfessionalProfileInput) {
     throw new Error('Valid email address is required');
   }
 
-  // Check category exists
   const categoryExists = await db.serviceCategory.findUnique({
     where: { id: Number(input.categoryId) },
   });

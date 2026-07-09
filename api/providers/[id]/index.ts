@@ -1,12 +1,12 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { getProfessionalById } from '../../services/professionalService.js';
+import { getProviderById } from '../../services/providerService.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { id } = req.query;
   const paramId = Array.isArray(id) ? id[0] : id;
 
   if (!paramId) {
-    return res.status(400).json({ success: false, message: 'Missing professional ID parameter' });
+    return res.status(400).json({ success: false, message: 'Missing provider ID parameter' });
   }
 
   const method = req.method;
@@ -17,7 +17,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const profile = await getProfessionalById(paramId);
+    const profile = await getProviderById(paramId);
     return res.status(200).json({ success: true, data: profile });
   } catch (err: any) {
     const message = err.message || '';
