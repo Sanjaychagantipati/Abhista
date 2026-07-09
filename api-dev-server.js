@@ -44,6 +44,20 @@ import providerAvailabilityHandler from './api/provider/availability.js';
 import adminConsultationsIndexHandler from './api/admin/consultations/index.js';
 import adminConsultationsDetailHandler from './api/admin/consultations/[id].js';
 
+// Callback Handler Imports
+import publicCallbacksIndexHandler from './api/callbacks/index.js';
+import publicCallbacksStatusHandler from './api/callbacks/status.js';
+import adminCallbacksIndexHandler from './api/admin/callbacks/index.js';
+import adminCallbacksDetailHandler from './api/admin/callbacks/[id]/index.js';
+import adminCallbacksAssignHandler from './api/admin/callbacks/[id]/assign.js';
+import adminCallbacksStatusHandler from './api/admin/callbacks/[id]/status.js';
+import adminCallbacksNotesHandler from './api/admin/callbacks/[id]/notes.js';
+import adminCallbacksAnalyticsHandler from './api/admin/callbacks/analytics.js';
+import providerCallbacksIndexHandler from './api/provider/callbacks/index.js';
+import providerCallbacksContactedHandler from './api/provider/callbacks/[id]/contacted.js';
+import providerCallbacksConsultationBookedHandler from './api/provider/callbacks/[id]/consultation-booked.js';
+import providerCallbacksServiceBookedHandler from './api/provider/callbacks/[id]/service-booked.js';
+
 const app = express();
 app.use(express.json());
 
@@ -124,6 +138,22 @@ app.put('/api/provider/availability', adapt(providerAvailabilityHandler));
 
 app.get('/api/admin/consultations', adapt(adminConsultationsIndexHandler));
 app.patch('/api/admin/consultations/:id', adapt(adminConsultationsDetailHandler));
+
+// Callback Request Routes
+app.post('/api/callbacks', adapt(publicCallbacksIndexHandler));
+app.get('/api/callbacks/status', adapt(publicCallbacksStatusHandler));
+
+app.get('/api/admin/callbacks', adapt(adminCallbacksIndexHandler));
+app.get('/api/admin/callbacks/analytics', adapt(adminCallbacksAnalyticsHandler));
+app.get('/api/admin/callbacks/:id', adapt(adminCallbacksDetailHandler));
+app.patch('/api/admin/callbacks/:id/assign', adapt(adminCallbacksAssignHandler));
+app.patch('/api/admin/callbacks/:id/status', adapt(adminCallbacksStatusHandler));
+app.patch('/api/admin/callbacks/:id/notes', adapt(adminCallbacksNotesHandler));
+
+app.get('/api/provider/callbacks', adapt(providerCallbacksIndexHandler));
+app.patch('/api/provider/callbacks/:id/contacted', adapt(providerCallbacksContactedHandler));
+app.patch('/api/provider/callbacks/:id/consultation-booked', adapt(providerCallbacksConsultationBookedHandler));
+app.patch('/api/provider/callbacks/:id/service-booked', adapt(providerCallbacksServiceBookedHandler));
 
 const port = 3000;
 app.listen(port, () => {

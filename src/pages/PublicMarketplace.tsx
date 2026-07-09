@@ -162,6 +162,22 @@ export function PublicMarketplace() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.15)_0,transparent_100%)]"></div>
       </section>
 
+      {/* Callback Request Banner */}
+      <section className="mx-auto w-full max-w-6xl px-4 pt-8 sm:px-6">
+        <div className="rounded-2xl bg-gradient-to-r from-stone-900 to-stone-850 p-6 sm:p-8 text-white shadow flex flex-col md:flex-row justify-between items-center gap-6">
+          <div>
+            <h3 className="text-xl sm:text-2xl font-bold font-serif">Not sure where to start?</h3>
+            <p className="text-stone-300 text-sm mt-1">Talk to our experts. Request a free callback to plan your home construction or renovation project.</p>
+          </div>
+          <button
+            onClick={() => navigate('/request-callback')}
+            className="whitespace-nowrap rounded-lg bg-emerald-600 px-6 py-3 font-bold text-sm text-white hover:bg-emerald-700 transition shadow"
+          >
+            Request a Callback
+          </button>
+        </div>
+      </section>
+
       {/* Main Grid: Browse and Listings */}
       <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
         {message && (

@@ -16,6 +16,7 @@ import { useAuth } from './hooks/auth/useAuth'
 import { getDashboardPathForRole } from './services/auth/authRedirect'
 import { PublicMarketplace } from './pages/PublicMarketplace'
 import { BookServicePage } from './pages/customer/BookServicePage'
+import { RequestCallbackPage } from './pages/RequestCallbackPage'
 
 interface RoleDashboardPlaceholderProps {
   title: string
@@ -46,6 +47,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<PublicMarketplace />} />
+      <Route path="/request-callback" element={<RequestCallbackPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route
         path="/book-service"

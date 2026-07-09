@@ -134,6 +134,7 @@ model ProviderProfile {
   portfolios             Portfolio[]
   favorites              Favorite[]
   reviews                Review[]
+  callbackRequests       CallbackRequest[]
 
   @@map("provider_profiles")
 }
@@ -159,6 +160,7 @@ model ServiceCategory {
 
   bookings      Booking[]
   providers     ProviderProfile[]
+  callbackRequests CallbackRequest[]
 
   @@map("service_categories")
 }
@@ -360,4 +362,43 @@ model Requirement {
   updatedAt           DateTime          @updatedAt @map("updated_at")
 
   @@map("requirements")
+}
+
+enum CallbackStatus {
+  NEW
+  ASSIGNED
+  CONTACTED
+  CONSULTATION_BOOKED
+  SERVICE_BOOKED
+  CLOSED
+  CANCELLED
+}
+
+model CallbackRequest {
+  id                 String          @id @default(uuid())
+  referenceNumber    String          @unique @map("reference_number")
+  fullName           String          @map("full_name")
+  phoneNumber        String          @map("phone_number")
+  email              String?
+  city               String
+  state              String
+  preferredLanguage  String          @map("preferred_language")
+  serviceCategoryId  Int?            @map("service_category_id")
+  category           ServiceCategory? @relation(fields: [serviceCategoryId], references: [id])
+  projectType        String          @map("project_type")
+  estimatedBudget    Float?          @map("estimated_budget")
+  preferredCallTime  String          @map("preferred_call_time")
+  message            String
+  status             CallbackStatus  @default(NEW)
+  assignedProviderId String?         @map("assigned_provider_id")
+  provider           ProviderProfile? @relation(fields: [assignedProviderId], references: [id])
+  assignedAdminId    String?         @map("assigned_admin_id")
+  callbackDate       DateTime?       @map("callback_date")
+  callbackTime       String?         @map("callback_time")
+  notes              String?
+  source             String          @default("Website")
+  createdAt          DateTime        @default(now())         @map("created_at")
+  updatedAt          DateTime        @updatedAt             @map("updated_at")
+
+  @@map("callback_requests")
 }
