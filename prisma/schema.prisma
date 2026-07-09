@@ -84,6 +84,7 @@ model CustomerProfile {
   consultations   ConsultationBooking[]
   favorites       Favorite[]
   reviews         Review[]
+  requirements    Requirement[]
 
   @@map("customer_profiles")
 }
@@ -310,4 +311,30 @@ model Blog {
   createdAt DateTime @default(now())
 
   @@map("blogs")
+}
+
+enum RequirementStatus {
+  OPEN
+  UNDER_REVIEW
+  ACCEPTED
+  PROJECT_CREATED
+  REJECTED
+}
+
+model Requirement {
+  id                  Int               @id @default(autoincrement())
+  customerId          String            @map("customer_id")
+  customer            CustomerProfile   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  title               String
+  description         String
+  serviceCategory     String            @map("service_category")
+  location            String
+  budgetMin           Float             @map("budget_min")
+  budgetMax           Float             @map("budget_max")
+  preferredStartDate  DateTime?         @map("preferred_start_date")
+  status              RequirementStatus @default(OPEN)
+  createdAt           DateTime          @default(now()) @map("created_at")
+  updatedAt           DateTime          @updatedAt @map("updated_at")
+
+  @@map("requirements")
 }

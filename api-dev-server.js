@@ -10,6 +10,9 @@ import professionalsDetailHandler from './api/professionals/[id]/index.js';
 import professionalsVerifyHandler from './api/professionals/[id]/verify.js';
 import professionalsFeatureHandler from './api/professionals/[id]/feature.js';
 import professionalsStatusHandler from './api/professionals/[id]/status.js';
+import requirementsIndexHandler from './api/requirements/index.js';
+import requirementsMyHandler from './api/requirements/my.js';
+import requirementsDetailHandler from './api/requirements/[id].js';
 
 const app = express();
 app.use(express.json());
@@ -45,6 +48,9 @@ app.get('/api/professionals/:id', adapt(professionalsDetailHandler));
 app.patch('/api/professionals/:id/verify', adapt(professionalsVerifyHandler));
 app.patch('/api/professionals/:id/feature', adapt(professionalsFeatureHandler));
 app.patch('/api/professionals/:id/status', adapt(professionalsStatusHandler));
+app.post('/api/requirements', adapt(requirementsIndexHandler));
+app.get('/api/requirements/my', adapt(requirementsMyHandler));
+app.get('/api/requirements/:id', adapt(requirementsDetailHandler));
 
 const port = 3000;
 app.listen(port, () => {
