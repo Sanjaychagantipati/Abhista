@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 export interface AuthenticatedUser {
   id: string;
   email: string;
-  role: 'CUSTOMER' | 'PROFESSIONAL' | 'CONSULTANT' | 'ADMIN';
+  role: 'CUSTOMER' | 'PROVIDER' | 'ADMIN';
 }
 
 export function verifyToken(req: VercelRequest): AuthenticatedUser | null {
@@ -21,6 +21,6 @@ export function verifyToken(req: VercelRequest): AuthenticatedUser | null {
   }
 }
 
-export function hasRole(user: AuthenticatedUser, allowedRoles: ('CUSTOMER' | 'PROFESSIONAL' | 'CONSULTANT' | 'ADMIN')[]): boolean {
+export function hasRole(user: AuthenticatedUser, allowedRoles: ('CUSTOMER' | 'PROVIDER' | 'ADMIN')[]): boolean {
   return allowedRoles.includes(user.role);
 }

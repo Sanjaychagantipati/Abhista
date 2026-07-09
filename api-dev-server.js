@@ -13,6 +13,17 @@ import providersStatusHandler from './api/providers/[id]/status.js';
 import requirementsIndexHandler from './api/requirements/index.js';
 import requirementsMyHandler from './api/requirements/my.js';
 import requirementsDetailHandler from './api/requirements/[id].js';
+import bookingsIndexHandler from './api/bookings/index.js';
+import bookingsMyHandler from './api/bookings/my.js';
+import bookingsDetailHandler from './api/bookings/[id]/index.js';
+import bookingsCancelHandler from './api/bookings/[id]/cancel.js';
+import providerBookingsIndexHandler from './api/provider/bookings/index.js';
+import providerBookingsAcceptHandler from './api/provider/bookings/[id]/accept.js';
+import providerBookingsRejectHandler from './api/provider/bookings/[id]/reject.js';
+import providerBookingsStartHandler from './api/provider/bookings/[id]/start.js';
+import providerBookingsCompleteHandler from './api/provider/bookings/[id]/complete.js';
+import adminBookingsIndexHandler from './api/admin/bookings/index.js';
+import adminBookingsUpdateHandler from './api/admin/bookings/[id].js';
 
 const app = express();
 app.use(express.json());
@@ -51,6 +62,21 @@ app.patch('/api/providers/:id/status', adapt(providersStatusHandler));
 app.post('/api/requirements', adapt(requirementsIndexHandler));
 app.get('/api/requirements/my', adapt(requirementsMyHandler));
 app.get('/api/requirements/:id', adapt(requirementsDetailHandler));
+
+// Booking Routes
+app.post('/api/bookings', adapt(bookingsIndexHandler));
+app.get('/api/bookings/my', adapt(bookingsMyHandler));
+app.get('/api/bookings/:id', adapt(bookingsDetailHandler));
+app.patch('/api/bookings/:id/cancel', adapt(bookingsCancelHandler));
+
+app.get('/api/provider/bookings', adapt(providerBookingsIndexHandler));
+app.patch('/api/provider/bookings/:id/accept', adapt(providerBookingsAcceptHandler));
+app.patch('/api/provider/bookings/:id/reject', adapt(providerBookingsRejectHandler));
+app.patch('/api/provider/bookings/:id/start', adapt(providerBookingsStartHandler));
+app.patch('/api/provider/bookings/:id/complete', adapt(providerBookingsCompleteHandler));
+
+app.get('/api/admin/bookings', adapt(adminBookingsIndexHandler));
+app.patch('/api/admin/bookings/:id', adapt(adminBookingsUpdateHandler));
 
 const port = 3000;
 app.listen(port, () => {

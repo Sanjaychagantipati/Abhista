@@ -27,8 +27,10 @@ enum VerificationStatus {
 }
 
 enum BookingStatus {
-  PENDING
-  CONFIRMED
+  REQUESTED
+  ACCEPTED
+  REJECTED
+  IN_PROGRESS
   COMPLETED
   CANCELLED
 }
@@ -155,18 +157,24 @@ model ServiceCategory {
 }
 
 model Booking {
-  id            String          @id @default(uuid())
-  customerId    String          @map("customer_id")
-  customer      CustomerProfile @relation(fields: [customerId], references: [id])
-  providerId    String          @map("provider_id")
-  provider      ProviderProfile @relation(fields: [providerId], references: [id])
-  categoryId    Int             @map("category_id")
-  category      ServiceCategory @relation(fields: [categoryId], references: [id])
-  status        BookingStatus   @default(PENDING)
-  scheduledDate DateTime        @map("scheduled_date")
-  notes         String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id              String          @id @default(uuid())
+  customerId      String          @map("customer_id")
+  customer        CustomerProfile @relation(fields: [customerId], references: [id])
+  providerId      String          @map("provider_id")
+  provider        ProviderProfile @relation(fields: [providerId], references: [id])
+  categoryId      Int             @map("category_id")
+  category        ServiceCategory @relation(fields: [categoryId], references: [id])
+  bookingNumber   String          @unique @map("booking_number")
+  bookingStatus   BookingStatus   @default(REQUESTED) @map("booking_status")
+  preferredDate   DateTime        @map("preferred_date")
+  preferredTime   String          @map("preferred_time")
+  customerAddress String          @map("customer_address")
+  city            String
+  state           String
+  notes           String?
+  estimatedBudget Float?          @map("estimated_budget")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
 
   @@map("bookings")
 }
@@ -177,7 +185,7 @@ model ConsultationBooking {
   customer      CustomerProfile @relation(fields: [customerId], references: [id])
   providerId    String          @map("provider_id")
   provider      ProviderProfile @relation(fields: [providerId], references: [id])
-  status        BookingStatus   @default(PENDING)
+  status        BookingStatus   @default(REQUESTED)
   scheduledSlot DateTime        @map("scheduled_slot")
   meetingLink   String?         @map("meeting_link")
   notes         String?
