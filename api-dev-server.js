@@ -2,6 +2,8 @@ import express from 'express';
 import indexHandler from './api/categories/index.js';
 import slugOrIdHandler from './api/categories/[slugOrId].js';
 import loginHandler from './api/auth/login.js';
+import customerProfileHandler from './api/customer/profile.js';
+import contractorProfileHandler from './api/contractor/profile.js';
 
 const app = express();
 app.use(express.json());
@@ -23,6 +25,12 @@ app.get('/api/categories/:slugOrId', adapt(slugOrIdHandler));
 app.put('/api/categories/:slugOrId', adapt(slugOrIdHandler));
 app.delete('/api/categories/:slugOrId', adapt(slugOrIdHandler));
 app.post('/api/auth/login', adapt(loginHandler));
+app.get('/api/customer/profile', adapt(customerProfileHandler));
+app.post('/api/customer/profile', adapt(customerProfileHandler));
+app.put('/api/customer/profile', adapt(customerProfileHandler));
+app.get('/api/contractor/profile', adapt(contractorProfileHandler));
+app.post('/api/contractor/profile', adapt(contractorProfileHandler));
+app.put('/api/contractor/profile', adapt(contractorProfileHandler));
 
 const port = 3000;
 app.listen(port, () => {
