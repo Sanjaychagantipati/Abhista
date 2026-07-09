@@ -13,7 +13,8 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   const { isAuthenticated, accessToken, user } = useAuth()
 
   if (!isAuthenticated || !accessToken) {
-    return <Navigate to="/login" replace state={{ from: location }} />
+    const redirectUrl = encodeURIComponent(location.pathname + location.search)
+    return <Navigate to={`/login?redirect=${redirectUrl}`} replace />
   }
 
   if (allowedRoles && user?.role && !allowedRoles.includes(user.role)) {

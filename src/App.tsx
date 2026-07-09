@@ -14,6 +14,8 @@ import { LeadsListPage } from './pages/contractor/LeadsListPage'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { useAuth } from './hooks/auth/useAuth'
 import { getDashboardPathForRole } from './services/auth/authRedirect'
+import { PublicMarketplace } from './pages/PublicMarketplace'
+import { BookServicePage } from './pages/customer/BookServicePage'
 
 interface RoleDashboardPlaceholderProps {
   title: string
@@ -43,8 +45,16 @@ function RootRedirect() {
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<RootRedirect />} />
+      <Route path="/" element={<PublicMarketplace />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/book-service"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_CUSTOMER']}>
+            <BookServicePage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/customer/dashboard"
         element={

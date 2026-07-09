@@ -19,10 +19,13 @@ export function CustomerPageShell({ children }: CustomerPageShellProps) {
     <main className="min-h-screen bg-[#f7f8f5] text-stone-950">
       <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <Link to="/customer/dashboard" className="text-xl font-semibold text-stone-950">
+          <Link to="/" className="text-xl font-semibold text-stone-950">
             Abhista
           </Link>
           <nav className="flex items-center gap-2" aria-label="Customer navigation">
+            <NavLink to="/" className={navLinkClass}>
+              Marketplace
+            </NavLink>
             <NavLink to="/customer/dashboard" className={navLinkClass}>
               Dashboard
             </NavLink>

@@ -19,11 +19,15 @@ export function LoginPage() {
   const { loading, error, isAuthenticated, user } = useAuthSelector((state) => state.auth)
   const [values, setValues] = useState<LoginRequest>(initialValues)
 
+  const queryParams = new URLSearchParams(location.search)
+  const redirectParam = queryParams.get('redirect')
+
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(getDashboardPathForRole(user?.role), { replace: true })
+      const target = redirectParam ? decodeURIComponent(redirectParam) : getDashboardPathForRole(user?.role)
+      navigate(target, { replace: true })
     }
-  }, [isAuthenticated, navigate, user?.role])
+  }, [isAuthenticated, navigate, user?.role, redirectParam])
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target
@@ -41,6 +45,9 @@ export function LoginPage() {
   }
 
   function getRedirectTarget(role: string) {
+    if (redirectParam) {
+      return decodeURIComponent(redirectParam)
+    }
     const from = location.state as { from?: { pathname?: string } } | null
 
     if (from?.from?.pathname && from.from.pathname !== '/login') {
