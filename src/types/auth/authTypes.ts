@@ -1,5 +1,6 @@
 export type UserRole =
   | 'ROLE_CUSTOMER'
+  | 'ROLE_PROVIDER'
   | 'ROLE_CONTRACTOR'
   | 'ROLE_WORKER'
   | 'ROLE_ARCHITECT'

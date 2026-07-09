@@ -2,6 +2,7 @@ import type { UserRole } from '../../types/auth/authTypes'
 
 const roleRedirects: Record<string, string> = {
   ROLE_CUSTOMER: '/customer/dashboard',
+  ROLE_PROVIDER: '/contractor/dashboard',
   ROLE_CONTRACTOR: '/contractor/dashboard',
   ROLE_WORKER: '/worker/dashboard',
   ROLE_ARCHITECT: '/architect/dashboard',

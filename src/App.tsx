@@ -88,7 +88,7 @@ function App() {
       <Route
         path="/contractor/dashboard"
         element={
-          <ProtectedRoute allowedRoles={['ROLE_CONTRACTOR']}>
+          <ProtectedRoute allowedRoles={['ROLE_PROVIDER', 'ROLE_CONTRACTOR']}>
             <ContractorDashboard />
           </ProtectedRoute>
         }
@@ -96,7 +96,7 @@ function App() {
       <Route
         path="/contractor/profile"
         element={
-          <ProtectedRoute allowedRoles={['ROLE_CONTRACTOR']}>
+          <ProtectedRoute allowedRoles={['ROLE_PROVIDER', 'ROLE_CONTRACTOR']}>
             <ContractorProfilePage />
           </ProtectedRoute>
         }
@@ -104,7 +104,7 @@ function App() {
       <Route
         path="/contractor/portfolio"
         element={
-          <ProtectedRoute allowedRoles={['ROLE_CONTRACTOR']}>
+          <ProtectedRoute allowedRoles={['ROLE_PROVIDER', 'ROLE_CONTRACTOR']}>
             <PortfolioListPage />
           </ProtectedRoute>
         }
@@ -112,7 +112,7 @@ function App() {
       <Route
         path="/contractor/portfolio/create"
         element={
-          <ProtectedRoute allowedRoles={['ROLE_CONTRACTOR']}>
+          <ProtectedRoute allowedRoles={['ROLE_PROVIDER', 'ROLE_CONTRACTOR']}>
             <PortfolioCreatePage />
           </ProtectedRoute>
         }
@@ -120,7 +120,7 @@ function App() {
       <Route
         path="/contractor/leads"
         element={
-          <ProtectedRoute allowedRoles={['ROLE_CONTRACTOR']}>
+          <ProtectedRoute allowedRoles={['ROLE_PROVIDER', 'ROLE_CONTRACTOR']}>
             <LeadsListPage />
           </ProtectedRoute>
         }
